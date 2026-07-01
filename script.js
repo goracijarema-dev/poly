@@ -121,7 +121,8 @@ const selectors = {
     document.querySelector("#openCreateTop"),
     document.querySelector("#openCreateHero"),
     document.querySelector("#openCreatePanel"),
-    document.querySelector("#emptyCreateButton")
+    document.querySelector("#emptyCreateButton"),
+    document.querySelector("#openCreateMobile")
   ]
 };
 
@@ -806,7 +807,11 @@ document.querySelector("#cabinetLink").addEventListener("click", () => {
   document.querySelector("#cabinet").scrollIntoView({ behavior: "smooth" });
 });
 
-["#openCreateTop", "#openCreateHero", "#openCreatePanel", "#emptyCreateButton"].forEach((selector) => {
+document.querySelector("#cabinetLinkMobile").addEventListener("click", () => {
+  document.querySelector("#cabinet").scrollIntoView({ behavior: "smooth" });
+});
+
+["#openCreateTop", "#openCreateHero", "#openCreatePanel", "#emptyCreateButton", "#openCreateMobile"].forEach((selector) => {
   document.querySelector(selector).addEventListener("click", requireAccountThenCreate);
 });
 

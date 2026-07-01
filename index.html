@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Полуничка</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png?v=20260701-mobile" />
+    <link rel="stylesheet" href="styles.css?v=20260701-mobile" />
     <script type="importmap">
       {
         "imports": {
@@ -18,7 +18,7 @@
     <canvas class="ambient-canvas" id="ambientCanvas" aria-hidden="true"></canvas>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="Полуничка">
-        <img class="brand-logo" src="assets/logo-strawberry.png" alt="" />
+        <img class="brand-logo" src="assets/logo-strawberry.png?v=20260701-mobile" alt="" />
         <span>Полуничка</span>
       </a>
       <nav class="nav-actions" aria-label="Основна навігація">
@@ -27,6 +27,12 @@
         <button class="primary-button small" id="openCreateTop" type="button">Розмістити послуги</button>
       </nav>
     </header>
+
+    <nav class="mobile-bottom-bar" aria-label="Швидка мобільна навігація">
+      <a class="mobile-nav-link" href="#catalog">Каталог</a>
+      <button class="mobile-nav-link" id="cabinetLinkMobile" type="button">Кабінет</button>
+      <button class="mobile-nav-link primary" id="openCreateMobile" type="button">Розмістити</button>
+    </nav>
 
     <main id="top">
       <section class="hero" aria-label="Полуничка">
@@ -290,7 +296,7 @@
       </article>
     </template>
 
-    <script type="module" src="three-scene.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="three-scene.js?v=20260701-mobile"></script>
+    <script src="script.js?v=20260701-mobile"></script>
   </body>
 </html>
