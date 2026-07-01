@@ -18,14 +18,19 @@ if (heroCanvas && phoneHeroScene.matches) {
 
 function initAmbientBackground(canvas) {
   const context = canvas.getContext("2d");
-  const ghostCards = Array.from({ length: 9 }, (_, index) => ({
-    delay: index * 0.42,
-    height: 84 + Math.random() * 72,
-    speed: 0.022 + Math.random() * 0.018,
-    width: 120 + Math.random() * 110,
+  const streams = Array.from({ length: 7 }, (_, index) => ({
+    delay: index * 0.78,
+    hue: index % 3,
+    offset: Math.random(),
+    speed: 0.08 + Math.random() * 0.08,
+    strength: 0.32 + Math.random() * 0.5
+  }));
+  const shards = Array.from({ length: 18 }, (_, index) => ({
+    delay: index * 0.36,
+    size: 8 + Math.random() * 26,
+    speed: 0.035 + Math.random() * 0.055,
     x: Math.random(),
-    y: Math.random(),
-    z: 0.68 + Math.random() * 0.5
+    y: Math.random()
   }));
   let scrollTarget = 0;
   let scrollSmooth = 0;
@@ -55,53 +60,61 @@ function initAmbientBackground(canvas) {
     context.globalCompositeOperation = "source-over";
 
     const wash = context.createLinearGradient(0, 0, width, height);
-    wash.addColorStop(0, `rgba(54, 8, 15, ${0.09 + Math.sin(t * 0.22) * 0.02})`);
-    wash.addColorStop(0.48, "rgba(255, 255, 255, 0.00)");
-    wash.addColorStop(1, `rgba(135, 231, 202, ${0.08 + Math.cos(t * 0.24) * 0.018})`);
+    wash.addColorStop(0, `rgba(70, 5, 22, ${0.32 + Math.sin(t * 0.22) * 0.04})`);
+    wash.addColorStop(0.42, "rgba(18, 2, 12, 0.28)");
+    wash.addColorStop(1, `rgba(5, 55, 48, ${0.2 + Math.cos(t * 0.24) * 0.035})`);
     context.fillStyle = wash;
     context.fillRect(0, 0, width, height);
 
     context.globalCompositeOperation = "screen";
-    const isCompact = width < 720;
-    const visibleCards = isCompact ? ghostCards.slice(0, 5) : ghostCards;
-    visibleCards.forEach((card, index) => {
-      const driftX = Math.sin(t * card.speed + card.delay) * (isCompact ? 18 : 44);
-      const driftY = Math.cos(t * card.speed * 0.8 + card.delay) * (isCompact ? 14 : 28) + scrollSmooth * (isCompact ? 36 : 68);
-      const x = ((card.x * width + driftX) % (width + 260)) - 130;
-      const y = ((card.y * height + driftY) % (height + 210)) - 105;
-      const alpha = (isCompact ? 0.024 : 0.045) + Math.max(0, Math.sin(t * 0.32 + card.delay)) * (isCompact ? 0.022 : 0.05);
+    context.lineCap = "round";
+    streams.forEach((stream, index) => {
+      const yBase = height * (0.12 + ((stream.offset + scrollSmooth * 0.25) % 0.86));
+      const color =
+        stream.hue === 0
+          ? `rgba(239, 59, 87, ${0.14 * stream.strength})`
+          : stream.hue === 1
+            ? `rgba(135, 231, 202, ${0.12 * stream.strength})`
+            : `rgba(246, 199, 108, ${0.1 * stream.strength})`;
+
+      context.beginPath();
+      for (let x = -80; x <= width + 80; x += 42) {
+        const wave = Math.sin(t * stream.speed + stream.delay + x * 0.008) * 42 * stream.strength;
+        const y = yBase + wave + Math.cos(t * 0.11 + index + x * 0.004) * 24;
+        if (x === -80) {
+          context.moveTo(x, y);
+        } else {
+          context.lineTo(x, y);
+        }
+      }
+      context.strokeStyle = color;
+      context.lineWidth = 1.2 + stream.strength * 1.6;
+      context.shadowBlur = 18;
+      context.shadowColor = color;
+      context.stroke();
+      context.shadowBlur = 0;
+    });
+
+    shards.forEach((shard, index) => {
+      const driftX = Math.sin(t * shard.speed + shard.delay) * 24;
+      const driftY = Math.cos(t * shard.speed * 0.8 + shard.delay) * 20 + scrollSmooth * 42;
+      const x = ((shard.x * width + driftX) % (width + 180)) - 90;
+      const y = ((shard.y * height + driftY) % (height + 150)) - 75;
+      const alpha = 0.045 + Math.max(0, Math.sin(t * 0.42 + shard.delay)) * 0.045;
+      const angle = -0.55 + Math.sin(t * 0.12 + shard.delay) * 0.28;
 
       context.save();
       context.translate(x, y);
-      context.rotate((isCompact ? -0.03 : -0.08) + Math.sin(t * 0.18 + card.delay) * (isCompact ? 0.025 : 0.08));
-      context.scale(card.z * (isCompact ? 0.68 : 1), card.z * (isCompact ? 0.68 : 1));
-
-      const cardGradient = context.createLinearGradient(0, 0, card.width, card.height);
-      cardGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha + 0.04})`);
-      cardGradient.addColorStop(1, `rgba(255, 232, 234, ${alpha})`);
-      context.fillStyle = cardGradient;
-      context.strokeStyle = index % 3 === 0 ? "rgba(135, 231, 202, 0.16)" : "rgba(246, 199, 108, 0.14)";
+      context.rotate(angle);
+      context.strokeStyle = index % 2 ? `rgba(135, 231, 202, ${alpha})` : `rgba(246, 199, 108, ${alpha})`;
       context.lineWidth = 1;
-      roundRect(context, 0, 0, card.width, card.height, 8);
-      context.fill();
+      context.beginPath();
+      context.moveTo(-shard.size, 0);
+      context.lineTo(0, -shard.size * 0.4);
+      context.lineTo(shard.size, 0);
+      context.lineTo(0, shard.size * 0.4);
+      context.closePath();
       context.stroke();
-
-      context.fillStyle = "rgba(183, 31, 57, 0.09)";
-      roundRect(context, 12, 12, card.width * 0.36, card.height - 24, 6);
-      context.fill();
-
-      context.fillStyle = "rgba(85, 17, 27, 0.09)";
-      roundRect(context, card.width * 0.46, 16, card.width * 0.38, 9, 6);
-      context.fill();
-      roundRect(context, card.width * 0.46, 34, card.width * 0.26, 7, 6);
-      context.fill();
-
-      context.fillStyle = "rgba(246, 199, 108, 0.12)";
-      roundRect(context, card.width * 0.46, card.height - 30, card.width * 0.2, 12, 6);
-      context.fill();
-      context.fillStyle = "rgba(135, 231, 202, 0.11)";
-      roundRect(context, card.width * 0.7, card.height - 30, card.width * 0.16, 12, 6);
-      context.fill();
       context.restore();
     });
 
@@ -135,202 +148,165 @@ function initHeroScene(canvas) {
   const pointer = new THREE.Vector2(0, 0);
   const targetPointer = new THREE.Vector2(0, 0);
   const root = new THREE.Group();
-  const showcase = new THREE.Group();
-  const markers = new THREE.Group();
-  const panels = new THREE.Group();
-  let sceneLayout = "desktop";
+  const sculpture = new THREE.Group();
+  const rings = new THREE.Group();
+  const ribbons = new THREE.Group();
+  const crystals = new THREE.Group();
+  const particles = new THREE.Group();
 
   window.polunychka3d = { ready: false, frames: 0 };
 
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   scene.add(root);
-  root.add(showcase, panels, markers);
+  root.add(sculpture, rings, ribbons, crystals, particles);
 
-  camera.position.set(0, 0, 7.4);
+  camera.position.set(0, 0, 7.2);
 
-  const keyLight = new THREE.DirectionalLight(0xfff1df, 4.4);
-  keyLight.position.set(-3.4, 4.2, 5);
+  const keyLight = new THREE.DirectionalLight(0xffefe6, 3.8);
+  keyLight.position.set(-3.2, 3.8, 5.2);
   scene.add(keyLight);
 
-  const rimLight = new THREE.DirectionalLight(0xff3f68, 3.6);
-  rimLight.position.set(4, 0.8, 3.4);
+  const rimLight = new THREE.DirectionalLight(0xff496f, 4.2);
+  rimLight.position.set(4.4, 0.6, 3.6);
   scene.add(rimLight);
 
-  const mintLight = new THREE.PointLight(0x87e7ca, 2.8, 12);
-  mintLight.position.set(2.2, -1.8, 2.6);
+  const mintLight = new THREE.PointLight(0x7df0d3, 3.4, 12);
+  mintLight.position.set(2.3, -1.8, 2.8);
   scene.add(mintLight);
 
-  const cardMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.26,
+  const berryMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xff315f,
+    emissive: 0x3f061a,
+    emissiveIntensity: 0.36,
     roughness: 0.18,
-    metalness: 0.02,
-    transmission: 0.16,
-    thickness: 0.42,
-    side: THREE.DoubleSide
+    metalness: 0.22,
+    clearcoat: 0.72,
+    clearcoatRoughness: 0.12
   });
-  const cardBackMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x5b1019,
+  const rubyGlass = new THREE.MeshPhysicalMaterial({
+    color: 0xff496f,
     transparent: true,
-    opacity: 0.3,
-    roughness: 0.24,
-    metalness: 0.08,
-    transmission: 0.08,
+    opacity: 0.42,
+    roughness: 0.08,
+    metalness: 0.04,
+    transmission: 0.28,
+    thickness: 0.45,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const mintGlass = rubyGlass.clone();
+  mintGlass.color.setHex(0x7df0d3);
+  mintGlass.opacity = 0.32;
+  const goldGlass = rubyGlass.clone();
+  goldGlass.color.setHex(0xffd06f);
+  goldGlass.opacity = 0.38;
+  const darkGlass = new THREE.MeshPhysicalMaterial({
+    color: 0x250614,
+    transparent: true,
+    opacity: 0.5,
+    roughness: 0.2,
+    metalness: 0.18,
+    transmission: 0.12,
+    thickness: 0.4,
     side: THREE.DoubleSide
   });
-  const photoMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xb71f39,
-    roughness: 0.34,
-    metalness: 0.02,
-    clearcoat: 0.56,
-    clearcoatRoughness: 0.18
+  const lineMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff496f,
+    transparent: true,
+    opacity: 0.62,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
   });
-  const priceMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xf6c76c,
-    emissive: 0x3a090f,
-    emissiveIntensity: 0.22,
-    roughness: 0.24,
+  const particleMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xffd06f,
+    emissive: 0xff315f,
+    emissiveIntensity: 0.26,
+    roughness: 0.28,
     metalness: 0.18,
     transparent: true,
-    opacity: 0.82,
-    clearcoat: 0.48
+    opacity: 0.72
   });
-  const cityMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x87e7ca,
-    emissive: 0x12382f,
-    emissiveIntensity: 0.16,
-    roughness: 0.3,
-    metalness: 0.08,
-    transparent: true,
-    opacity: 0.68,
-    clearcoat: 0.36
-  });
-  const glassMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.18,
-    roughness: 0.12,
-    metalness: 0,
-    transmission: 0.28,
-    thickness: 0.5,
-    side: THREE.DoubleSide
-  });
-  const deepGlassMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x5b1019,
-    transparent: true,
-    opacity: 0.24,
-    roughness: 0.2,
-    metalness: 0.06,
-    transmission: 0.12,
-    side: THREE.DoubleSide
-  });
+
+  const core = new THREE.Mesh(new THREE.TorusKnotGeometry(0.82, 0.075, 220, 22, 2, 5), berryMaterial);
+  const innerFacet = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 2), darkGlass);
+  const glassShell = new THREE.Mesh(new THREE.IcosahedronGeometry(1.04, 3), rubyGlass);
+  innerFacet.rotation.set(0.2, -0.35, 0.18);
+  glassShell.rotation.set(-0.12, 0.4, -0.2);
+  sculpture.add(innerFacet, core, glassShell);
+
   [
-    { x: -0.62, y: 0.46, z: 0.2, scale: 1.08, phase: 0 },
-    { x: 0.64, y: 0.0, z: 0.64, scale: 1.18, phase: 1.4 },
-    { x: -0.06, y: -0.74, z: 0.42, scale: 0.92, phase: 2.8 }
+    { radius: 1.28, tube: 0.014, color: rubyGlass, rotation: [1.2, 0.24, 0.08], phase: 0 },
+    { radius: 1.58, tube: 0.01, color: mintGlass, rotation: [0.72, -0.56, 0.64], phase: 1.2 },
+    { radius: 1.92, tube: 0.008, color: goldGlass, rotation: [1.55, 0.08, -0.62], phase: 2.3 },
+    { radius: 2.16, tube: 0.006, color: mintGlass, rotation: [0.26, 1.05, 0.2], phase: 3.5 }
   ].forEach((config) => {
-    const card = createProfileCard(config.scale);
-    card.position.set(config.x, config.y, config.z);
-    card.rotation.set(-0.08, -0.24 + config.x * 0.08, 0.06 - config.x * 0.05);
-    card.userData.baseX = config.x;
-    card.userData.baseY = config.y;
-    card.userData.baseZ = config.z;
-    card.userData.baseRotationZ = card.rotation.z;
-    card.userData.baseScale = config.scale;
-    card.userData.phase = config.phase;
-    showcase.add(card);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(config.radius, config.tube, 12, 220), config.color.clone());
+    ring.rotation.set(...config.rotation);
+    ring.userData.phase = config.phase;
+    rings.add(ring);
   });
-
-  for (let i = 0; i < 5; i += 1) {
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(0.72 + (i % 2) * 0.22, 1.05), i % 2 ? deepGlassMaterial : glassMaterial);
-    panel.position.set(-1.15 + i * 0.44, -0.58 + Math.sin(i * 1.4) * 0.18, -0.35 - i * 0.08);
-    panel.rotation.set(-0.2 + i * 0.025, 0.38, -0.22 + i * 0.07);
-    panel.userData.baseX = panel.position.x;
-    panel.userData.baseY = panel.position.y;
-    panel.userData.baseZ = panel.position.z;
-    panel.userData.baseRotationZ = panel.rotation.z;
-    panel.userData.phase = i * 0.8;
-    panels.add(panel);
-  }
 
   [
-    { x: -1.26, y: 0.02, z: 0.48, scale: 0.94, phase: 0.2 },
-    { x: 1.35, y: 0.58, z: 0.34, scale: 0.82, phase: 1.1 },
-    { x: -0.98, y: -1.02, z: 0.58, scale: 0.76, phase: 2.3 },
-    { x: 1.02, y: -0.9, z: 0.5, scale: 0.7, phase: 3.2 },
-    { x: 0.02, y: 1.06, z: 0.18, scale: 0.64, phase: 4.1 }
+    { color: 0xff496f, radius: 0.72, height: 1.7, phase: 0 },
+    { color: 0x7df0d3, radius: 0.86, height: 1.9, phase: 2.1 },
+    { color: 0xffd06f, radius: 1.02, height: 1.55, phase: 4.2 }
   ].forEach((config, index) => {
-    const badge = createFloatingBadge(index);
-    badge.position.set(config.x, config.y, config.z);
-    badge.rotation.set(-0.08, 0.28 - index * 0.08, -0.18 + index * 0.12);
-    badge.scale.setScalar(config.scale);
-    badge.userData.baseX = config.x;
-    badge.userData.baseY = config.y;
-    badge.userData.baseZ = config.z;
-    badge.userData.baseRotationZ = badge.rotation.z;
-    badge.userData.baseScale = config.scale;
-    badge.userData.phase = config.phase;
-    markers.add(badge);
+    const curve = createRibbonCurve(config.radius, config.height, config.phase);
+    const material = lineMaterial.clone();
+    material.color.setHex(config.color);
+    material.opacity = index === 0 ? 0.62 : 0.5;
+    const ribbon = new THREE.Mesh(new THREE.TubeGeometry(curve, 180, 0.012 - index * 0.0015, 8, false), material);
+    ribbon.userData.phase = config.phase;
+    ribbons.add(ribbon);
   });
 
-  function createProfileCard(scale = 1) {
-    const card = new THREE.Group();
-    const base = new THREE.Mesh(new THREE.PlaneGeometry(1.12, 1.48), cardMaterial);
-    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.18, 1.54), cardBackMaterial);
-    const photo = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.62), photoMaterial);
-    const headline = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.045), deepGlassMaterial);
-    const subline = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.034), glassMaterial);
-    const priceOne = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.13), priceMaterial);
-    const priceTwo = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.13), cityMaterial);
-    const avatar = new THREE.Mesh(new THREE.CircleGeometry(0.07, 24), priceMaterial);
-
-    shadow.position.set(0.035, -0.035, -0.02);
-    base.position.z = 0;
-    photo.position.set(-0.28, 0.25, 0.03);
-    headline.position.set(0.22, 0.42, 0.04);
-    subline.position.set(0.16, 0.31, 0.04);
-    priceOne.position.set(0.16, -0.35, 0.05);
-    priceTwo.position.set(0.43, -0.35, 0.055);
-    avatar.position.set(0.42, 0.1, 0.055);
-
-    [shadow, base, photo, headline, subline, priceOne, priceTwo, avatar].forEach((mesh) => card.add(mesh));
-
-    for (let i = 0; i < 4; i += 1) {
-      const metric = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.055), i % 2 ? cityMaterial : glassMaterial);
-      metric.position.set(-0.36 + i * 0.19, -0.08, 0.05);
-      card.add(metric);
-    }
-
-    card.scale.setScalar(scale);
-    return card;
+  for (let i = 0; i < 16; i += 1) {
+    const material = i % 3 === 0 ? goldGlass.clone() : i % 3 === 1 ? mintGlass.clone() : rubyGlass.clone();
+    material.opacity = 0.28 + (i % 4) * 0.045;
+    const crystal = new THREE.Mesh(new THREE.TetrahedronGeometry(0.08 + (i % 4) * 0.014), material);
+    const angle = (i / 16) * Math.PI * 2;
+    const radius = 1.38 + (i % 5) * 0.18;
+    crystal.position.set(Math.cos(angle) * radius, Math.sin(angle * 1.4) * 0.58, Math.sin(angle) * radius * 0.34);
+    crystal.rotation.set(i * 0.42, i * 0.27, i * 0.16);
+    crystal.userData = {
+      angle,
+      radius,
+      baseY: crystal.position.y,
+      phase: i * 0.48
+    };
+    crystals.add(crystal);
   }
 
-  function createFloatingBadge(index) {
-    const badge = new THREE.Group();
-    const shellMaterial = (index % 2 ? glassMaterial : deepGlassMaterial).clone();
-    const accentMaterial = (index % 2 ? cityMaterial : priceMaterial).clone();
-    const quietMaterial = glassMaterial.clone();
+  const particleGeometry = new THREE.TetrahedronGeometry(0.026, 0);
+  const particleMesh = new THREE.InstancedMesh(particleGeometry, particleMaterial, 72);
+  const tempObject = new THREE.Object3D();
+  const particleSeeds = Array.from({ length: 72 }, (_, index) => ({
+    angle: index * 0.618,
+    radius: 1.45 + (index % 12) * 0.1,
+    height: -1.2 + (index % 18) * 0.14,
+    phase: index * 0.37,
+    scale: 0.55 + (index % 5) * 0.12
+  }));
+  particleMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  particles.add(particleMesh);
 
-    shellMaterial.opacity = index % 2 ? 0.2 : 0.28;
-    accentMaterial.opacity = index % 2 ? 0.72 : 0.78;
-    quietMaterial.opacity = 0.32;
-
-    const shell = new THREE.Mesh(new THREE.PlaneGeometry(0.48, 0.22), shellMaterial);
-    const dot = new THREE.Mesh(new THREE.CircleGeometry(0.055, 24), accentMaterial);
-    const lineOne = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.026), quietMaterial);
-    const lineTwo = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.02), quietMaterial);
-    const chip = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.07), accentMaterial.clone());
-
-    shell.position.z = 0;
-    dot.position.set(-0.16, 0.04, 0.025);
-    lineOne.position.set(0.08, 0.045, 0.03);
-    lineTwo.position.set(0.045, -0.015, 0.03);
-    chip.position.set(0.13, -0.07, 0.035);
-
-    [shell, dot, lineOne, lineTwo, chip].forEach((mesh) => badge.add(mesh));
-    return badge;
+  function createRibbonCurve(radius, height, phase) {
+    const points = [];
+    for (let i = 0; i < 110; i += 1) {
+      const progress = i / 109;
+      const angle = progress * Math.PI * 4.2 + phase;
+      const pulse = Math.sin(progress * Math.PI * 3 + phase) * 0.15;
+      points.push(
+        new THREE.Vector3(
+          Math.cos(angle) * (radius + pulse),
+          (progress - 0.5) * height,
+          Math.sin(angle) * (radius * 0.46 + pulse * 0.4)
+        )
+      );
+    }
+    return new THREE.CatmullRomCurve3(points);
   }
 
   function resize() {
@@ -343,92 +319,62 @@ function initHeroScene(canvas) {
     camera.updateProjectionMatrix();
 
     const isMobile = width < 720;
-    const isPhone = width < 520;
-    sceneLayout = isPhone ? "phone" : isMobile ? "tablet" : "desktop";
-
     root.position.set(
-      isPhone ? 1.08 : isMobile ? 0.92 : 1.9,
-      isPhone ? -1.55 : isMobile ? -0.72 : 0.02,
-      isMobile ? 0.12 : 0
+      isMobile ? 0.84 : 1.92,
+      isMobile ? -0.44 : 0.02,
+      isMobile ? 0.06 : 0
     );
-    root.scale.setScalar(isPhone ? 0.48 : isMobile ? 0.7 : 1.1);
-
-    const phoneCards = [
-      { x: -0.34, y: 0.28, z: 0.22, rotationZ: -0.04, scale: 0.72 },
-      { x: 0.16, y: -0.02, z: 0.5, rotationZ: 0.05, scale: 0.84 },
-      { x: -0.16, y: -0.38, z: 0.36, rotationZ: -0.07, scale: 0.62 }
-    ];
-    const tabletCards = [
-      { x: -0.5, y: 0.28, z: 0.2, rotationZ: -0.02, scale: 0.92 },
-      { x: 0.42, y: -0.06, z: 0.58, rotationZ: 0.05, scale: 1.02 },
-      { x: -0.04, y: -0.62, z: 0.42, rotationZ: -0.04, scale: 0.8 }
-    ];
-
-    showcase.children.forEach((card, index) => {
-      const config = isPhone ? phoneCards[index] : isMobile ? tabletCards[index] : null;
-      card.visible = true;
-      if (config) {
-        card.userData.baseX = config.x;
-        card.userData.baseY = config.y;
-        card.userData.baseZ = config.z;
-        card.userData.baseRotationZ = config.rotationZ;
-        card.position.set(config.x, config.y, config.z);
-        card.rotation.z = config.rotationZ;
-        card.scale.setScalar(config.scale);
-      } else {
-        card.userData.baseX = card.position.x = [-0.62, 0.64, -0.06][index];
-        card.userData.baseY = card.position.y = [0.46, 0, -0.74][index];
-        card.userData.baseZ = card.position.z = [0.2, 0.64, 0.42][index];
-        card.userData.baseRotationZ = [0.091, 0.028, 0.063][index];
-        card.rotation.z = card.userData.baseRotationZ;
-        card.scale.setScalar(card.userData.baseScale);
-      }
-    });
-
-    panels.visible = !isPhone;
-    markers.visible = !isMobile;
-    cardMaterial.opacity = isPhone ? 0.16 : isMobile ? 0.22 : 0.26;
-    cardBackMaterial.opacity = isPhone ? 0.2 : isMobile ? 0.26 : 0.3;
-    glassMaterial.opacity = isPhone ? 0.12 : isMobile ? 0.16 : 0.18;
-    deepGlassMaterial.opacity = isPhone ? 0.18 : isMobile ? 0.22 : 0.24;
+    root.scale.setScalar(isMobile ? 0.72 : 1.08);
   }
 
   function animate() {
     const elapsed = clock.getElapsedTime();
     pointer.lerp(targetPointer, 0.055);
 
-    const isPhoneScene = sceneLayout === "phone";
-    const isCompactScene = sceneLayout !== "desktop";
+    root.rotation.y = -0.12 + Math.sin(elapsed * 0.32) * 0.08 + pointer.x * 0.16;
+    root.rotation.x = Math.sin(elapsed * 0.24) * 0.04 - pointer.y * 0.08;
+    sculpture.rotation.y = elapsed * 0.16;
+    sculpture.rotation.z = Math.sin(elapsed * 0.28) * 0.08;
+    core.rotation.x = elapsed * 0.22;
+    core.rotation.y = -elapsed * 0.18;
+    innerFacet.rotation.y = -elapsed * 0.12;
+    glassShell.rotation.x = elapsed * 0.08;
+    glassShell.rotation.z = -elapsed * 0.06;
 
-    root.rotation.y = isPhoneScene
-      ? -0.035 + Math.sin(elapsed * 0.18) * 0.025 + pointer.x * 0.035
-      : -0.1 + Math.sin(elapsed * 0.42) * 0.1 + pointer.x * 0.14;
-    root.rotation.x = isPhoneScene
-      ? Math.sin(elapsed * 0.16) * 0.015 - pointer.y * 0.025
-      : Math.sin(elapsed * 0.32) * 0.042 - pointer.y * 0.075;
-    showcase.children.forEach((card) => {
-      const speed = isPhoneScene ? 0.16 : isCompactScene ? 0.24 : 0.36;
-      const floatX = isPhoneScene ? 0.014 : isCompactScene ? 0.032 : 0.055;
-      const floatY = isPhoneScene ? 0.024 : isCompactScene ? 0.045 : 0.075;
-      const rotateZ = isPhoneScene ? 0.006 : isCompactScene ? 0.014 : 0.025;
-      const rotateY = isPhoneScene ? 0.02 : isCompactScene ? 0.045 : 0.07;
-
-      card.position.x = card.userData.baseX + Math.sin(elapsed * speed + card.userData.phase) * floatX;
-      card.position.y = card.userData.baseY + Math.cos(elapsed * (speed + 0.04) + card.userData.phase) * floatY;
-      card.rotation.z = card.userData.baseRotationZ + Math.sin(elapsed * speed + card.userData.phase) * rotateZ;
-      card.rotation.y = (isPhoneScene ? -0.12 : -0.24) + Math.sin(elapsed * (speed + 0.02) + card.userData.phase) * rotateY + pointer.x * (isPhoneScene ? 0.018 : 0.04);
+    rings.children.forEach((ring, index) => {
+      ring.rotation.z += 0.0026 + index * 0.0007;
+      ring.rotation.x += Math.sin(elapsed * 0.16 + ring.userData.phase) * 0.0008;
+      ring.scale.setScalar(1 + Math.sin(elapsed * 0.8 + ring.userData.phase) * 0.018);
     });
 
-    panels.children.forEach((panel) => {
-      panel.position.y = panel.userData.baseY + Math.sin(elapsed * 0.8 + panel.userData.phase) * 0.075;
-      panel.rotation.z = panel.userData.baseRotationZ + Math.sin(elapsed * 0.35 + panel.userData.phase) * 0.045;
+    ribbons.children.forEach((ribbon, index) => {
+      ribbon.rotation.y = elapsed * (0.11 + index * 0.025) + ribbon.userData.phase * 0.12;
+      ribbon.rotation.z = Math.sin(elapsed * 0.2 + ribbon.userData.phase) * 0.12;
+      ribbon.position.y = Math.sin(elapsed * 0.5 + ribbon.userData.phase) * 0.035;
     });
 
-    markers.children.forEach((badge) => {
-      badge.position.x = badge.userData.baseX + Math.sin(elapsed * 0.34 + badge.userData.phase) * 0.035;
-      badge.position.y = badge.userData.baseY + Math.cos(elapsed * 0.46 + badge.userData.phase) * 0.065;
-      badge.rotation.z = badge.userData.baseRotationZ + Math.sin(elapsed * 0.38 + badge.userData.phase) * 0.06;
+    crystals.children.forEach((crystal) => {
+      const angle = crystal.userData.angle + elapsed * 0.08;
+      crystal.position.x = Math.cos(angle) * crystal.userData.radius;
+      crystal.position.z = Math.sin(angle) * crystal.userData.radius * 0.34;
+      crystal.position.y = crystal.userData.baseY + Math.sin(elapsed * 0.76 + crystal.userData.phase) * 0.08;
+      crystal.rotation.x += 0.007;
+      crystal.rotation.y += 0.009;
     });
+
+    particleSeeds.forEach((seed, index) => {
+      const angle = seed.angle + elapsed * (0.09 + (index % 4) * 0.012);
+      tempObject.position.set(
+        Math.cos(angle) * seed.radius,
+        seed.height + Math.sin(elapsed * 0.64 + seed.phase) * 0.18,
+        Math.sin(angle) * seed.radius * 0.44
+      );
+      tempObject.rotation.set(elapsed * 0.2 + seed.phase, elapsed * 0.16, seed.phase);
+      tempObject.scale.setScalar(seed.scale);
+      tempObject.updateMatrix();
+      particleMesh.setMatrixAt(index, tempObject.matrix);
+    });
+    particleMesh.instanceMatrix.needsUpdate = true;
 
     renderer.render(scene, camera);
     window.polunychka3d.ready = true;

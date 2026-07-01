@@ -213,7 +213,7 @@ h3 {
 .hero {
   background-image:
     linear-gradient(90deg, rgba(22, 4, 7, 0.98) 0%, rgba(54, 8, 15, 0.92) 40%, rgba(54, 8, 15, 0.42) 68%, rgba(22, 4, 7, 0.25) 100%),
-    url("assets/hero-beach.jpg?v=20260701-mobile");
+    linear-gradient(135deg, rgba(239, 59, 87, 0.3), rgba(135, 231, 202, 0.16));
   background-position: 68% center;
   background-size: cover;
   color: var(--white);
@@ -1192,7 +1192,7 @@ textarea {
   .hero {
     background-image:
       linear-gradient(180deg, rgba(22, 4, 7, 0.98) 0%, rgba(54, 8, 15, 0.86) 48%, rgba(54, 8, 15, 0.42) 100%),
-      url("assets/hero-beach.jpg?v=20260701-mobile");
+      linear-gradient(135deg, rgba(239, 59, 87, 0.28), rgba(135, 231, 202, 0.14));
     background-position: 58% center;
     min-height: 820px;
     padding-top: 190px;
@@ -1706,6 +1706,720 @@ textarea {
 
   .price-list,
   .price-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark cinematic redesign */
+:root {
+  --night: #070108;
+  --wine-950: #11020a;
+  --wine-900: #1c0410;
+  --wine-800: #370a1f;
+  --wine-700: #75152f;
+  --berry: #df2e55;
+  --strawberry: #ff496f;
+  --rose: #ffd7df;
+  --paper: #120711;
+  --white: #fff7fa;
+  --champagne: #ffd06f;
+  --mint: #7df0d3;
+  --ink: #fff2f6;
+  --muted: #c9a7b3;
+  --line: rgba(255, 255, 255, 0.13);
+  --glass: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 0 20px 58px rgba(0, 0, 0, 0.36);
+  --shadow-deep: 0 34px 95px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+html {
+  background: #070108;
+}
+
+body {
+  background:
+    linear-gradient(180deg, #070108 0%, #13020b 45%, #07030a 100%);
+  color: var(--ink);
+}
+
+body::before {
+  animation: darkFieldShift 24s ease-in-out infinite alternate;
+  background:
+    conic-gradient(from 140deg at 54% 10%, rgba(255, 73, 111, 0.26), transparent 22%, rgba(125, 240, 211, 0.18), transparent 48%, rgba(255, 208, 111, 0.12), transparent 72%, rgba(255, 73, 111, 0.22)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), transparent 31%, rgba(125, 240, 211, 0.045) 72%, transparent 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0));
+  background-size: 150% 150%, 100% 100%, 100% 100%;
+  opacity: 0.9;
+}
+
+body::after {
+  animation: gridPulse 18s linear infinite;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(125deg, transparent 0 42%, rgba(255, 73, 111, 0.075) 50%, transparent 58% 100%);
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 92px 92px, 92px 92px, 220% 220%;
+  content: "";
+  inset: 0;
+  opacity: 0.28;
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+}
+
+.ambient-canvas {
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.site-header {
+  background:
+    linear-gradient(110deg, rgba(7, 1, 8, 0.88), rgba(64, 11, 31, 0.68)),
+    rgba(7, 1, 8, 0.72);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.44);
+}
+
+.brand-logo {
+  background:
+    radial-gradient(circle at 32% 18%, rgba(255, 255, 255, 0.9), rgba(255, 215, 223, 0.52) 38%, rgba(255, 73, 111, 0.24) 68%, rgba(7, 1, 8, 0.74));
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.44),
+    0 0 34px rgba(255, 73, 111, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.nav-actions a,
+.mobile-nav-link {
+  color: rgba(255, 247, 250, 0.84);
+}
+
+.nav-actions a:hover,
+.mobile-nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.hero {
+  animation: heroField 20s ease-in-out infinite alternate;
+  background-image:
+    linear-gradient(90deg, rgba(7, 1, 8, 0.98) 0%, rgba(28, 4, 16, 0.84) 44%, rgba(7, 1, 8, 0.46) 100%),
+    conic-gradient(from 220deg at 73% 42%, rgba(125, 240, 211, 0.26), transparent 19%, rgba(255, 73, 111, 0.42), transparent 56%, rgba(255, 208, 111, 0.18), transparent 80%, rgba(125, 240, 211, 0.2));
+  background-position: center, 50% 50%;
+  background-size: 100% 100%, 155% 155%;
+}
+
+.hero::before {
+  animation: prismSweep 16s ease-in-out infinite alternate;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.11), transparent 28%, rgba(255, 73, 111, 0.1) 46%, transparent 60%, rgba(125, 240, 211, 0.1) 82%, transparent),
+    repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 28px);
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.95), transparent 86%);
+  opacity: 0.55;
+}
+
+.hero-overlay {
+  background:
+    radial-gradient(circle at 76% 42%, rgba(255, 73, 111, 0.18), transparent 32%),
+    linear-gradient(180deg, rgba(7, 1, 8, 0.04), transparent 44%, rgba(7, 1, 8, 0.86)),
+    linear-gradient(90deg, rgba(7, 1, 8, 0.36), transparent 55%);
+}
+
+.hero-sheen {
+  animation: sceneSheen 9s ease-in-out infinite;
+  background: linear-gradient(112deg, rgba(255, 255, 255, 0.1), transparent 42%, rgba(125, 240, 211, 0.16));
+}
+
+.hero-content {
+  max-width: 590px;
+}
+
+.hero-content::before {
+  background: linear-gradient(180deg, var(--strawberry), var(--champagne) 52%, var(--mint));
+  box-shadow: 0 0 32px rgba(255, 73, 111, 0.38);
+}
+
+.eyebrow {
+  color: rgba(255, 247, 250, 0.7);
+  letter-spacing: 0;
+}
+
+.eyebrow.dark {
+  color: rgba(255, 208, 111, 0.92);
+}
+
+.hero-copy {
+  color: rgba(255, 247, 250, 0.88);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hero-stats {
+  border-top-color: rgba(255, 255, 255, 0.14);
+}
+
+.hero-stats span,
+.catalog-summary span,
+.metrics span,
+.owner-badge {
+  background: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 247, 250, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hero-stats strong,
+.card-topline h3,
+.account-panel h3,
+.empty-state h3,
+.modal-body h2,
+.section-heading h2,
+.price-fieldset legend {
+  color: var(--ink);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #ff5477, #df2e55 54%, #8d1938);
+  box-shadow:
+    0 18px 48px rgba(223, 46, 85, 0.34),
+    0 0 36px rgba(255, 73, 111, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.secondary-button {
+  background: linear-gradient(135deg, rgba(255, 208, 111, 0.96), rgba(255, 154, 112, 0.82));
+  color: #220710;
+  box-shadow:
+    0 18px 42px rgba(255, 144, 92, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.outline-button,
+.ghost-button,
+.text-button,
+.icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  color: rgba(255, 247, 250, 0.92);
+}
+
+.outline-button:hover,
+.ghost-button:hover,
+.text-button:hover,
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+
+.text-button {
+  background: transparent;
+  border-color: transparent;
+  color: var(--champagne);
+}
+
+.icon-button {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.dashboard-band,
+.catalog-section {
+  background:
+    linear-gradient(180deg, rgba(8, 1, 10, 0.9), rgba(22, 4, 14, 0.78)),
+    linear-gradient(125deg, rgba(255, 73, 111, 0.08), transparent 44%, rgba(125, 240, 211, 0.07));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-band::before,
+.catalog-section::before {
+  background:
+    linear-gradient(140deg, rgba(255, 73, 111, 0.15), transparent 34%, rgba(255, 208, 111, 0.08) 55%, transparent 76%),
+    repeating-linear-gradient(105deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 34px);
+  opacity: 0.38;
+}
+
+.catalog-section {
+  background:
+    linear-gradient(180deg, rgba(22, 4, 14, 0.8), rgba(7, 1, 8, 0.92)),
+    linear-gradient(155deg, rgba(255, 73, 111, 0.08), transparent 42%, rgba(125, 240, 211, 0.07));
+}
+
+.account-panel,
+.catalog-tools,
+.profile-card,
+.empty-state,
+.modal-body,
+.price-fieldset,
+.upload-area {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.045)),
+    linear-gradient(135deg, rgba(255, 73, 111, 0.09), transparent 46%, rgba(125, 240, 211, 0.055));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+@supports (backdrop-filter: blur(18px)) {
+  .account-panel,
+  .catalog-tools,
+  .profile-card,
+  .empty-state,
+  .modal-body,
+  .price-fieldset,
+  .upload-area,
+  .catalog-summary span,
+  .hero-stats span,
+  .metrics span,
+  .owner-badge {
+    backdrop-filter: blur(18px) saturate(1.2);
+  }
+}
+
+.account-panel p,
+.card-city,
+.card-phone,
+.card-description,
+.empty-state p,
+.price-fieldset p,
+.upload-area small,
+.profile-row p {
+  color: var(--muted);
+}
+
+.avatar {
+  background:
+    radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.88), rgba(255, 208, 111, 0.8) 36%, rgba(255, 73, 111, 0.82) 72%, rgba(55, 10, 31, 0.92));
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #17030b;
+  box-shadow: 0 16px 38px rgba(255, 73, 111, 0.2);
+}
+
+.catalog-tools {
+  background:
+    linear-gradient(145deg, rgba(24, 4, 15, 0.88), rgba(67, 12, 34, 0.72)),
+    linear-gradient(115deg, rgba(255, 208, 111, 0.08), transparent 44%, rgba(125, 240, 211, 0.08));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.catalog-tools label {
+  grid-column: span 2;
+}
+
+.catalog-tools label:first-child {
+  grid-column: span 4;
+}
+
+.catalog-tools label:nth-child(2) {
+  grid-column: span 3;
+}
+
+label span,
+.full-label span,
+.upload-area span,
+.catalog-tools label span {
+  color: rgba(255, 247, 250, 0.78);
+}
+
+input,
+select,
+textarea {
+  background: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.13);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 247, 250, 0.43);
+}
+
+option {
+  background: #16040d;
+  color: #fff7fa;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.catalog-tools input:focus,
+.catalog-tools select:focus {
+  border-color: rgba(255, 208, 111, 0.74);
+  box-shadow:
+    0 0 0 4px rgba(255, 208, 111, 0.12),
+    0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff7fa;
+  box-shadow: 0 0 0 1000px #1a0610 inset;
+}
+
+.profile-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.045)),
+    linear-gradient(145deg, rgba(255, 73, 111, 0.1), transparent 44%, rgba(255, 208, 111, 0.075) 72%, rgba(125, 240, 211, 0.06));
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+.profile-card::before {
+  background: linear-gradient(90deg, var(--strawberry), var(--champagne), var(--mint));
+  box-shadow: 0 0 26px rgba(255, 73, 111, 0.42);
+}
+
+.profile-card::after {
+  background: linear-gradient(112deg, rgba(255, 255, 255, 0.16), transparent 48%, rgba(125, 240, 211, 0.11));
+}
+
+.profile-card:hover {
+  border-color: rgba(255, 208, 111, 0.28);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.42),
+    0 0 46px rgba(255, 73, 111, 0.14);
+}
+
+.card-photo {
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 247, 250, 0.22), transparent 24%),
+    conic-gradient(from 200deg at 62% 42%, rgba(255, 73, 111, 0.64), rgba(125, 240, 211, 0.34), rgba(255, 208, 111, 0.32), rgba(255, 73, 111, 0.64)),
+    linear-gradient(135deg, #16040d, #421027 58%, #0b1418);
+}
+
+.card-photo::before {
+  animation: cardAurora 12s linear infinite;
+  background:
+    linear-gradient(110deg, transparent 0 18%, rgba(255, 255, 255, 0.18) 24%, transparent 36% 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px);
+  content: "";
+  inset: -35%;
+  opacity: 0.42;
+  position: absolute;
+}
+
+.card-photo::after {
+  background:
+    linear-gradient(0deg, rgba(7, 1, 8, 0.76), rgba(7, 1, 8, 0)),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 52%);
+  z-index: 2;
+}
+
+.card-photo img {
+  position: relative;
+  z-index: 1;
+}
+
+.card-topline strong,
+.card-phone {
+  color: var(--champagne);
+}
+
+.price-list span {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.045)),
+    linear-gradient(135deg, rgba(255, 208, 111, 0.1), transparent);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 247, 250, 0.9);
+}
+
+.price-list b {
+  color: rgba(255, 208, 111, 0.86);
+}
+
+.metrics span:first-child {
+  background: rgba(125, 240, 211, 0.12);
+}
+
+.owner-badge {
+  background: rgba(255, 208, 111, 0.1);
+  color: rgba(255, 247, 250, 0.88);
+}
+
+.delete-card.confirming {
+  background: linear-gradient(135deg, #ff496f, #9d173b);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.empty-state {
+  border-style: dashed;
+}
+
+.modal::backdrop {
+  background:
+    radial-gradient(circle at 54% 12%, rgba(255, 73, 111, 0.2), transparent 36%),
+    linear-gradient(135deg, rgba(7, 1, 8, 0.88), rgba(55, 10, 31, 0.78));
+}
+
+.modal-body {
+  background:
+    linear-gradient(145deg, rgba(24, 4, 15, 0.96), rgba(8, 1, 10, 0.92)),
+    linear-gradient(135deg, rgba(255, 73, 111, 0.1), transparent 44%, rgba(125, 240, 211, 0.07));
+}
+
+.price-fieldset {
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.upload-area {
+  border-style: dashed;
+}
+
+.upload-area strong {
+  color: var(--rose);
+}
+
+.upload-area input {
+  background: rgba(255, 255, 255, 0.075);
+}
+
+.photo-preview img {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34);
+}
+
+.form-error {
+  color: #ff8ca3;
+}
+
+.modal-actions {
+  background:
+    linear-gradient(180deg, rgba(10, 1, 9, 0.72), rgba(10, 1, 9, 0.94));
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+@keyframes darkFieldShift {
+  0% {
+    background-position: 0% 0%, 0 0, 0 0;
+    filter: saturate(1);
+  }
+  100% {
+    background-position: 100% 32%, 0 0, 0 0;
+    filter: saturate(1.12);
+  }
+}
+
+@keyframes gridPulse {
+  0% {
+    background-position: 0 0, 0 0, 0% 50%;
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 0.34;
+  }
+  100% {
+    background-position: 92px 46px, 46px 92px, 100% 50%;
+    opacity: 0.22;
+  }
+}
+
+@keyframes heroField {
+  0% {
+    background-position: center, 42% 50%;
+  }
+  100% {
+    background-position: center, 68% 42%;
+  }
+}
+
+@keyframes prismSweep {
+  0% {
+    opacity: 0.42;
+    transform: translate3d(-2%, 0, 0);
+  }
+  100% {
+    opacity: 0.66;
+    transform: translate3d(3%, 0, 0);
+  }
+}
+
+@keyframes cardAurora {
+  0% {
+    transform: translate3d(-6%, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(6%, 0, 0) rotate(8deg);
+  }
+}
+
+@keyframes phoneCardFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .catalog-tools {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .catalog-tools label,
+  .catalog-tools label:nth-child(2) {
+    grid-column: span 2;
+  }
+
+  .catalog-tools label:first-child {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 940px) {
+  .hero {
+    background-image:
+      linear-gradient(180deg, rgba(7, 1, 8, 0.98) 0%, rgba(28, 4, 16, 0.88) 48%, rgba(7, 1, 8, 0.62) 100%),
+      conic-gradient(from 220deg at 58% 36%, rgba(125, 240, 211, 0.22), transparent 21%, rgba(255, 73, 111, 0.38), transparent 58%, rgba(255, 208, 111, 0.16), transparent 80%);
+    background-position: center, 50% 50%;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    background:
+      linear-gradient(180deg, #070108 0%, #12040d 54%, #070108 100%);
+  }
+
+  body::before {
+    animation-duration: 28s;
+    opacity: 0.7;
+  }
+
+  body::after {
+    background-size: 68px 68px, 68px 68px, 180% 180%;
+    opacity: 0.18;
+  }
+
+  .ambient-canvas {
+    opacity: 0.34;
+  }
+
+  .site-header {
+    background:
+      linear-gradient(110deg, rgba(7, 1, 8, 0.94), rgba(49, 8, 26, 0.78)),
+      rgba(7, 1, 8, 0.9);
+  }
+
+  .mobile-bottom-bar {
+    background:
+      linear-gradient(135deg, rgba(7, 1, 8, 0.94), rgba(58, 10, 30, 0.88)),
+      rgba(7, 1, 8, 0.88);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -20px 58px rgba(0, 0, 0, 0.42);
+  }
+
+  .hero {
+    min-height: 630px;
+    padding: 108px 14px 32px;
+  }
+
+  .hero::before {
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.82), transparent 78%);
+    opacity: 0.38;
+  }
+
+  .hero-sheen {
+    opacity: 0.45;
+  }
+
+  .hero-content {
+    max-width: none;
+  }
+
+  .hero-content::before {
+    height: 42px;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+  }
+
+  .hero-stats {
+    gap: 8px;
+  }
+
+  .hero-stats span {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .dashboard-band,
+  .catalog-section {
+    padding: 42px 14px;
+  }
+
+  .catalog-tools {
+    border-radius: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-tools label,
+  .catalog-tools label:first-child,
+  .catalog-tools label:nth-child(2) {
+    grid-column: span 1;
+  }
+
+  .catalog-tools label:first-child,
+  .catalog-tools label:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    animation:
+      cardIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      phoneCardFloat 9s ease-in-out var(--float-delay) infinite;
+    transform: none;
+  }
+
+  .profile-card:hover {
+    transform: none;
+  }
+
+  .card-photo {
+    aspect-ratio: 1.08;
+  }
+
+  .modal-actions {
+    background:
+      linear-gradient(180deg, rgba(10, 1, 9, 0.72), rgba(10, 1, 9, 0.98));
+    border-top-color: rgba(255, 255, 255, 0.11);
+  }
+}
+
+@media (max-width: 430px) {
+  .hero {
+    min-height: 600px;
+  }
+
+  .catalog-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-tools label,
+  .catalog-tools label:first-child,
+  .catalog-tools label:nth-child(2) {
+    grid-column: 1;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .price-list {
     grid-template-columns: 1fr;
   }
 }

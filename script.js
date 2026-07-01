@@ -5,7 +5,7 @@ const storageKeys = {
   version: "polunychka.version"
 };
 
-const appDataVersion = "2026-07-01-tariffs-v3";
+const appDataVersion = "2026-07-02-dark-redesign-v2";
 
 const priceOptions = [
   { key: "min30", field: "listingPrice30", label: "30 хв" },
@@ -238,7 +238,7 @@ const seedListings = [
     city: "Київ",
     phone: "+380 67 111 22 33",
     description: "Індивідуальні послуги для подій, зустрічей і приватних запитів. Працюю за попередньою домовленістю.",
-    photos: ["assets/hero-beach.jpg"]
+    photos: []
   },
   {
     id: "seed-2",
@@ -254,7 +254,7 @@ const seedListings = [
     city: "Львів",
     phone: "+380 68 222 33 44",
     description: "Охайна анкета з прозорими умовами, погодинною оплатою та швидкою відповіддю на заявки.",
-    photos: ["assets/hero-beach.jpg"]
+    photos: []
   },
   {
     id: "seed-3",
@@ -270,7 +270,7 @@ const seedListings = [
     city: "Одеса",
     phone: "+380 63 333 44 55",
     description: "Доступна для персональних послуг у місті. Деталі, графік і формат обговорюються окремо.",
-    photos: ["assets/hero-beach.jpg"]
+    photos: []
   }
 ];
 
@@ -421,6 +421,7 @@ function formatPriceSummary(listing) {
 
 function normalizeListing(listing) {
   const seed = seedListings.find((item) => item.id === listing.id);
+  const isSeedListing = Boolean(seed && listing.ownerEmail === "demo@polunychka.ua");
   const merged = {
     ...seed,
     ...listing
@@ -432,7 +433,7 @@ function normalizeListing(listing) {
     price: getPrimaryPrice(normalizedPrices) || Number(merged.price) || 0,
     priceOptions: normalizedPrices,
     phone: merged.phone || seed?.phone || "",
-    photos: merged.photos?.length ? merged.photos : seed?.photos || []
+    photos: isSeedListing ? seed.photos : merged.photos?.length ? merged.photos : seed?.photos || []
   };
 }
 
