@@ -6,8 +6,16 @@
     <title>Полуничка</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
   </head>
   <body>
+    <canvas class="ambient-canvas" id="ambientCanvas" aria-hidden="true"></canvas>
     <header class="site-header">
       <a class="brand" href="#top" aria-label="Полуничка">
         <img class="brand-logo" src="assets/logo-strawberry.png" alt="" />
@@ -22,12 +30,14 @@
 
     <main id="top">
       <section class="hero" aria-label="Полуничка">
+        <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
         <div class="hero-overlay"></div>
+        <div class="hero-sheen" aria-hidden="true"></div>
         <div class="hero-content">
           <p class="eyebrow">Приватний каталог послуг</p>
           <h1 class="visually-hidden">Полуничка</h1>
           <p class="hero-copy">
-            Акуратний простір для анкет, описів, фото та погодинної вартості.
+            Акуратний простір для анкет, описів, фото та гнучких тарифів.
           </p>
           <div class="hero-actions">
             <button class="primary-button" id="openRegisterHero" type="button">Створити кабінет</button>
@@ -103,11 +113,11 @@
           </label>
           <label>
             <span>Ціна від</span>
-            <input id="priceMinFilter" type="number" min="0" placeholder="грн/год" />
+            <input id="priceMinFilter" type="number" min="0" placeholder="грн" />
           </label>
           <label>
             <span>Ціна до</span>
-            <input id="priceMaxFilter" type="number" min="0" placeholder="грн/год" />
+            <input id="priceMaxFilter" type="number" min="0" placeholder="грн" />
           </label>
           <label>
             <span>Вік від</span>
@@ -199,10 +209,6 @@
             <input id="listingBust" type="text" maxlength="12" placeholder="Напр. B, 2, 75C" required />
           </label>
           <label>
-            <span>Ціна/год, грн</span>
-            <input id="listingPrice" type="number" min="1" max="999999" required />
-          </label>
-          <label>
             <span>Місто</span>
             <input id="listingCity" type="text" list="ukrainianCities" maxlength="40" placeholder="Київ" required />
           </label>
@@ -211,6 +217,32 @@
             <input id="listingPhone" type="tel" maxlength="24" placeholder="+380..." required />
           </label>
         </div>
+        <fieldset class="price-fieldset">
+          <legend>Тарифи, грн</legend>
+          <p>Заповни хоча б один варіант. Решту можна залишити порожніми.</p>
+          <div class="price-grid">
+            <label>
+              <span>30 хв</span>
+              <input id="listingPrice30" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 700" />
+            </label>
+            <label>
+              <span>1 година</span>
+              <input id="listingPriceHour" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 1200" />
+            </label>
+            <label>
+              <span>2 години</span>
+              <input id="listingPrice2h" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 2200" />
+            </label>
+            <label>
+              <span>5 годин</span>
+              <input id="listingPrice5h" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 5000" />
+            </label>
+            <label>
+              <span>Ніч</span>
+              <input id="listingPriceNight" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 9000" />
+            </label>
+          </div>
+        </fieldset>
         <datalist id="ukrainianCities"></datalist>
 
         <label class="full-label">
@@ -244,6 +276,7 @@
           </div>
           <p class="card-city"></p>
           <div class="metrics"></div>
+          <div class="price-list"></div>
           <a class="card-phone" href="#"></a>
           <p class="card-description"></p>
           <div class="card-footer">
@@ -257,6 +290,7 @@
       </article>
     </template>
 
+    <script type="module" src="three-scene.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

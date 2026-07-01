@@ -5,32 +5,18 @@ const storageKeys = {
   version: "polunychka.version"
 };
 
-const appDataVersion = "2026-07-01-editing-v2";
+const appDataVersion = "2026-07-01-tariffs-v3";
 
-const ukrainianCities = [
-  "Київ",
-  "Львів",
-  "Одеса",
-  "Харків",
-  "Дніпро",
-  "Запоріжжя",
-  "Вінниця",
-  "Івано-Франківськ",
-  "Тернопіль",
-  "Ужгород",
-  "Чернівці",
-  "Рівне",
-  "Луцьк",
-  "Житомир",
-  "Хмельницький",
-  "Черкаси",
-  "Полтава",
-  "Кропивницький",
-  "Миколаїв",
-  "Херсон",
-  "Чернігів",
-  "Суми"
+const priceOptions = [
+  { key: "min30", field: "listingPrice30", label: "30 хв" },
+  { key: "hour1", field: "listingPriceHour", label: "1 година" },
+  { key: "hour2", field: "listingPrice2h", label: "2 години" },
+  { key: "hour5", field: "listingPrice5h", label: "5 годин" },
+  { key: "night", field: "listingPriceNight", label: "Ніч" }
 ];
+
+const ukrainianCities =
+  "Авдіївка|Алмазна|Алупка|Алушта|Алчевськ|Амвросіївка|Ананьїв|Андрушівка|Антрацит|Апостолове|Армянськ|Арциз|Багачеве|Балаклія|Балта|Бар|Баранівка|Барвінкове|Батурин|Бахмач|Бахмут|Бахчисарай|Баштанка|Белз|Бердичів|Бердянськ|Берегове|Бережани|Березань|Березівка|Березне|Берестечко|Берестин|Берислав|Бершадь|Бібрка|Біла Церква|Білгород-Дністровський|Білицьке|Білогірськ|Білозерське|Білопілля|Біляївка|Благовіщенське|Бобринець|Бобровиця|Богодухів|Богуслав|Боково-Хрустальне|Болград|Болехів|Борзна|Борислав|Бориспіль|Борщів|Боярка|Бровари|Броди|Брянка|Бунге|Буринь|Бурштин|Буськ|Буча|Бучач|Валки|Вараш|Василівка|Васильків|Вашківці|Великі Мости|Верхівцеве|Верхньодніпровськ|Вижниця|Вилкове|Винники|Виноградів|Вишгород|Вишневе|Вільногірськ|Вільнянськ|Вінниця|Вовчанськ|Вознесенівка|Вознесенськ|Волноваха|Володимир|Волочиськ|Ворожба|Вуглегірськ|Вугледар|Гадяч|Гайворон|Гайсин|Галич|Генічеськ|Герца|Гірник|Гірське|Глиняни|Глобине|Глухів|Гнівань|Гола Пристань|Голубівка|Горішні Плавні|Горлівка|Городенка|Городище|Городня|Городок|Горохів|Гребінка|Гуляйполе|Дебальцеве|Деражня|Дергачі|Джанкой|Дніпро|Дніпрорудне|Добромиль|Добропілля|Довжанськ|Докучаєвськ|Долина|Долинська|Донецьк|Дрогобич|Дружківка|Дубляни|Дубно|Дубровиця|Дунаївці|Енергодар|Євпаторія|Єнакієве|Жашків|Жданівка|Жидачів|Житомир|Жмеринка|Жовква|Жовті Води|Заводське|Залізне|Заліщики|Запоріжжя|Заставна|Збараж|Зборів|Звенигородка|Звягель|Здолбунів|Зеленодольськ|Зимогір'я|Зіньків|Златопіль|Зміїв|Знам'янка|Золоте|Золотоноша|Золочів|Зоринськ|Зугрес|Івано-Франківськ|Ізмаїл|Ізюм|Ізяслав|Іллінці|Іловайськ|Інкерман|Ірміно|Ірпінь|Іршава|Ічня|Кагарлик|Кадіївка|Калинівка|Калуш|Кальміуське|Кам'янець-Подільський|Кам'янка|Кам'янка-Бузька|Кам'янка-Дніпровська|Кам'янське|Камінь-Каширський|Канів|Карлівка|Каховка|Керч|Київ|Кипуче|Ківерці|Кілія|Кіцмань|Кобеляки|Ковель|Кодима|Козятин|Коломия|Комарно|Конотоп|Копичинці|Корець|Коростень|Коростишів|Корсунь-Шевченківський|Корюківка|Косів|Костопіль|Костянтинівка|Краматорськ|Красилів|Красногорівка|Кременець|Кременчук|Кремінна|Кривий Ріг|Кролевець|Кропивницький|Куп'янськ|Курахове|Ладижин|Ланівці|Лебедин|Лиман|Липовець|Лисичанськ|Лозова|Лохвиця|Лубни|Луганськ|Лутугине|Луцьк|Львів|Любомль|Люботин|Макіївка|Мала Виска|Малин|Мар'їнка|Марганець|Маріуполь|Мелітополь|Мена|Мерефа|Миколаїв|Миколаївка|Миргород|Мирноград|Миронівка|Міусинськ|Могилів-Подільський|Молочанськ|Монастириська|Монастирище|Моршин|Моспине|Мостиська|Мукачево|Надвірна|Немирів|Нетішин|Ніжин|Нікополь|Нова Каховка|Нова Одеса|Новгород-Сіверський|Новий Буг|Новий Калинів|Новий Розділ|Новоазовськ|Нововолинськ|Новогродівка|Новодністровськ|Новодружеськ|Новомиргород|Новоселиця|Новоукраїнка|Новояворівськ|Носівка|Обухів|Овруч|Одеса|Олевськ|Олександрівськ|Олександрія|Олешки|Олика|Оріхів|Остер|Острог|Отаманівка|Охтирка|Очаків|П'ятихатки|Павлоград|Первомайськ|Перевальськ|Перемишляни|Перечин|Перещепине|Переяслав|Петрово-Красносілля|Пирятин|Південне|Південноукраїнськ|Підгайці|Підгороднє|Погребище|Подільськ|Покров|Покровськ|Пологи|Полонне|Полтава|Помічна|Попасна|Почаїв|Привілля|Прилуки|Приморськ|Прип'ять|Пустомити|Путивль|Рава-Руська|Радехів|Радивилів|Радомишль|Рахів|Рені|Решетилівка|Ржищів|Рівне|Ровеньки|Рогатин|Родинське|Рожище|Роздільна|Ромни|Рубіжне|Рудки|Саки|Самар|Самбір|Сарни|Свалява|Сватове|Світловодськ|Світлодарськ|Святогірськ|Севастополь|Селидове|Семенівка|Середина-Буда|Синельникове|Сіверськ|Сіверськодонецьк|Сімферополь|Скадовськ|Скалат|Сквира|Сколе|Славута|Славутич|Слобожанське|Слов'янськ|Сміла|Снігурівка|Сніжне|Сновськ|Снятин|Сокаль|Сокиряни|Сокологірськ|Соледар|Сорокине|Соснівка|Старий Крим|Старий Самбір|Старобільськ|Старокостянтинів|Стебник|Сторожинець|Стрий|Судак|Судова Вишня|Суми|Суходільськ|Таврійськ|Тальне|Тараща|Татарбунари|Теплодар|Теребовля|Тернівка|Тернопіль|Тетіїв|Тисмениця|Тлумач|Токмак|Торецьк|Тростянець|Трускавець|Тульчин|Турка|Тячів|Угнів|Ужгород|Узин|Українка|Українськ|Умань|Устилуг|Фастів|Феодосія|Харків|Харцизьк|Херсон|Хирів|Хмельницький|Хмільник|Ходорів|Хорол|Хоростків|Хотин|Хрестівка|Христинівка|Хрустальний|Хуст|Хутір-Михайлівський|Часів Яр|Черкаси|Чернівці|Чернігів|Чигирин|Чистякове|Чоп|Чорнобиль|Чорноморськ|Чортків|Чугуїв|Чуднів|Шаргород|Шахтарськ|Шахтарське|Шепетівка|Шептицький|Шостка|Шпола|Шумськ|Щастя|Щолкіне|Яворів|Яготин|Ялта|Ямпіль|Яни Капу|Яремче|Ясинувата".split("|");
 
 const seedListings = [
   {
@@ -43,6 +29,7 @@ const seedListings = [
     weight: 54,
     bust: "B",
     price: 900,
+    priceOptions: { min30: 550, hour1: 900, hour2: 1600, night: 6200 },
     city: "Київ",
     phone: "+380 67 111 22 33",
     description: "Індивідуальні послуги для подій, зустрічей і приватних запитів. Працюю за попередньою домовленістю.",
@@ -58,6 +45,7 @@ const seedListings = [
     weight: 59,
     bust: "C",
     price: 1200,
+    priceOptions: { min30: 700, hour1: 1200, hour2: 2200, hour5: 5000, night: 8500 },
     city: "Львів",
     phone: "+380 68 222 33 44",
     description: "Охайна анкета з прозорими умовами, погодинною оплатою та швидкою відповіддю на заявки.",
@@ -73,6 +61,7 @@ const seedListings = [
     weight: 52,
     bust: "2",
     price: 800,
+    priceOptions: { hour1: 800, hour2: 1450, hour5: 3400 },
     city: "Одеса",
     phone: "+380 63 333 44 55",
     description: "Доступна для персональних послуг у місті. Деталі, графік і формат обговорюються окремо.",
@@ -180,13 +169,64 @@ function createListingId() {
   return globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : String(Date.now());
 }
 
+function normalizePriceOptions(listing) {
+  const normalized = {};
+
+  priceOptions.forEach((option) => {
+    const value = Number(listing.priceOptions?.[option.key]);
+    if (Number.isFinite(value) && value > 0) {
+      normalized[option.key] = value;
+    }
+  });
+
+  if (!Object.keys(normalized).length) {
+    const legacyPrice = Number(listing.price);
+    if (Number.isFinite(legacyPrice) && legacyPrice > 0) {
+      normalized.hour1 = legacyPrice;
+    }
+  }
+
+  return normalized;
+}
+
+function getPriceValues(listing) {
+  return Object.values(normalizePriceOptions(listing));
+}
+
+function getLowestPrice(listing) {
+  const prices = getPriceValues(listing);
+  return prices.length ? Math.min(...prices) : 0;
+}
+
+function getPrimaryPrice(priceMap) {
+  const values = Object.values(priceMap);
+  if (!values.length) return 0;
+  return Number(priceMap.hour1) || Math.min(...values);
+}
+
+function formatCurrency(value) {
+  return Number(value).toLocaleString("uk-UA");
+}
+
+function formatPriceSummary(listing) {
+  const lowest = getLowestPrice(listing);
+  return lowest ? `від ${formatCurrency(lowest)} грн` : "Ціну не вказано";
+}
+
 function normalizeListing(listing) {
   const seed = seedListings.find((item) => item.id === listing.id);
-  return {
+  const merged = {
     ...seed,
-    ...listing,
-    phone: listing.phone || seed?.phone || "",
-    photos: listing.photos?.length ? listing.photos : seed?.photos || []
+    ...listing
+  };
+  const normalizedPrices = normalizePriceOptions(merged);
+
+  return {
+    ...merged,
+    price: getPrimaryPrice(normalizedPrices) || Number(merged.price) || 0,
+    priceOptions: normalizedPrices,
+    phone: merged.phone || seed?.phone || "",
+    photos: merged.photos?.length ? merged.photos : seed?.photos || []
   };
 }
 
@@ -411,14 +451,28 @@ function fillListingForm(listing) {
   getListingField("listingHeight").value = listing.height || "";
   getListingField("listingWeight").value = listing.weight || "";
   getListingField("listingBust").value = listing.bust || "";
-  getListingField("listingPrice").value = listing.price || "";
   getListingField("listingCity").value = listing.city || "";
   getListingField("listingPhone").value = listing.phone || "";
   getListingField("listingDescription").value = listing.description || "";
+  priceOptions.forEach((option) => {
+    getListingField(option.field).value = listing.priceOptions?.[option.key] || "";
+  });
   renderPhotoPreview();
 }
 
+function collectPriceOptions() {
+  return priceOptions.reduce((prices, option) => {
+    const value = Number(getListingField(option.field).value);
+    if (Number.isFinite(value) && value > 0) {
+      prices[option.key] = value;
+    }
+    return prices;
+  }, {});
+}
+
 function collectListingData(user) {
+  const priceMap = collectPriceOptions();
+
   return {
     ownerEmail: user.email,
     name: getListingField("listingName").value.trim(),
@@ -427,7 +481,8 @@ function collectListingData(user) {
     height: Number(getListingField("listingHeight").value),
     weight: Number(getListingField("listingWeight").value),
     bust: getListingField("listingBust").value.trim(),
-    price: Number(getListingField("listingPrice").value),
+    price: getPrimaryPrice(priceMap),
+    priceOptions: priceMap,
     city: getListingField("listingCity").value.trim(),
     phone: getListingField("listingPhone").value.trim(),
     description: getListingField("listingDescription").value.trim(),
@@ -450,6 +505,11 @@ function handleListingSubmit(event) {
 
   if (state.selectedPhotos.length < 1 || state.selectedPhotos.length > 8) {
     selectors.listingError.textContent = "Додай від 1 до 8 фото.";
+    return;
+  }
+
+  if (!Object.keys(collectPriceOptions()).length) {
+    selectors.listingError.textContent = "Вкажи хоча б один тариф: 30 хв, 1 година, 2 години, 5 годин або ніч.";
     return;
   }
 
@@ -492,6 +552,42 @@ function makeMetric(label) {
   return item;
 }
 
+function renderPriceList(container, listing) {
+  container.innerHTML = "";
+  const prices = normalizePriceOptions(listing);
+
+  priceOptions.forEach((option) => {
+    if (!prices[option.key]) return;
+    const item = document.createElement("span");
+    item.innerHTML = `<b>${option.label}</b>${formatCurrency(prices[option.key])} грн`;
+    container.append(item);
+  });
+}
+
+function initCardTilt() {
+  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!canHover || reduceMotion) return;
+
+  selectors.cardsGrid.querySelectorAll(".profile-card").forEach((card) => {
+    if (card.dataset.tiltReady === "true") return;
+    card.dataset.tiltReady = "true";
+
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.setProperty("--tilt-x", `${(-y * 5).toFixed(2)}deg`);
+      card.style.setProperty("--tilt-y", `${(x * 6).toFixed(2)}deg`);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--tilt-x", "0deg");
+      card.style.setProperty("--tilt-y", "0deg");
+    });
+  });
+}
+
 function matchesFilters(listing) {
   const search = selectors.searchInput.value.trim().toLowerCase();
   const city = selectors.cityFilter.value;
@@ -504,13 +600,14 @@ function matchesFilters(listing) {
   const bust = selectors.bustFilter.value.trim().toLowerCase();
   const searchable = `${listing.name} ${listing.city} ${listing.description}`.toLowerCase();
   const listingBust = String(listing.bust).toLowerCase();
+  const prices = getPriceValues(listing);
+  const priceMatches = prices.some((price) => price >= priceMin && price <= priceMax);
 
   return (
     (!search || searchable.includes(search)) &&
     (!city || listing.city === city) &&
     (!gender || listing.gender === gender) &&
-    Number(listing.price) >= priceMin &&
-    Number(listing.price) <= priceMax &&
+    priceMatches &&
     Number(listing.age) >= ageMin &&
     Number(listing.age) <= ageMax &&
     Number(listing.height) >= heightMin &&
@@ -527,13 +624,14 @@ function renderCards() {
   selectors.resultsCount.textContent = formatListingsCount(visible.length);
   selectors.emptyState.classList.toggle("is-hidden", visible.length > 0);
 
-  visible.forEach((listing) => {
+  visible.forEach((listing, index) => {
     const node = selectors.cardTemplate.content.firstElementChild.cloneNode(true);
     const photo = node.querySelector(".card-photo");
     const title = node.querySelector("h3");
     const price = node.querySelector(".card-topline strong");
     const city = node.querySelector(".card-city");
     const metrics = node.querySelector(".metrics");
+    const priceList = node.querySelector(".price-list");
     const phone = node.querySelector(".card-phone");
     const description = node.querySelector(".card-description");
     const owner = node.querySelector(".owner-badge");
@@ -541,7 +639,8 @@ function renderCards() {
     const deleteButton = node.querySelector(".delete-card");
 
     title.textContent = `${listing.name}, ${listing.age}`;
-    price.textContent = `${Number(listing.price).toLocaleString("uk-UA")} грн/год`;
+    node.style.setProperty("--float-delay", `${(index % 6) * -0.74}s`);
+    price.textContent = formatPriceSummary(listing);
     city.textContent = listing.city;
     phone.textContent = listing.phone ? `Телефон: ${listing.phone}` : "Телефон не додано";
     if (listing.phone) {
@@ -565,6 +664,7 @@ function renderCards() {
       `${listing.weight} кг`,
       `Бюст ${listing.bust}`
     ].forEach((metric) => metrics.append(makeMetric(metric)));
+    renderPriceList(priceList, listing);
 
     if (user && listing.ownerEmail === user.email) {
       node.classList.add("can-manage");
@@ -592,6 +692,8 @@ function renderCards() {
 
     selectors.cardsGrid.append(node);
   });
+
+  initCardTilt();
 }
 
 function renderAccount() {
