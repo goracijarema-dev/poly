@@ -58,17 +58,19 @@ function initAmbientBackground(canvas) {
     context.fillRect(0, 0, width, height);
 
     context.globalCompositeOperation = "screen";
-    ghostCards.forEach((card, index) => {
-      const driftX = Math.sin(t * card.speed + card.delay) * 44;
-      const driftY = Math.cos(t * card.speed * 0.8 + card.delay) * 28 + scrollSmooth * 68;
+    const isCompact = width < 720;
+    const visibleCards = isCompact ? ghostCards.slice(0, 5) : ghostCards;
+    visibleCards.forEach((card, index) => {
+      const driftX = Math.sin(t * card.speed + card.delay) * (isCompact ? 18 : 44);
+      const driftY = Math.cos(t * card.speed * 0.8 + card.delay) * (isCompact ? 14 : 28) + scrollSmooth * (isCompact ? 36 : 68);
       const x = ((card.x * width + driftX) % (width + 260)) - 130;
       const y = ((card.y * height + driftY) % (height + 210)) - 105;
-      const alpha = 0.045 + Math.max(0, Math.sin(t * 0.32 + card.delay)) * 0.05;
+      const alpha = (isCompact ? 0.024 : 0.045) + Math.max(0, Math.sin(t * 0.32 + card.delay)) * (isCompact ? 0.022 : 0.05);
 
       context.save();
       context.translate(x, y);
-      context.rotate(-0.08 + Math.sin(t * 0.18 + card.delay) * 0.08);
-      context.scale(card.z, card.z);
+      context.rotate((isCompact ? -0.03 : -0.08) + Math.sin(t * 0.18 + card.delay) * (isCompact ? 0.025 : 0.08));
+      context.scale(card.z * (isCompact ? 0.68 : 1), card.z * (isCompact ? 0.68 : 1));
 
       const cardGradient = context.createLinearGradient(0, 0, card.width, card.height);
       cardGradient.addColorStop(0, `rgba(255, 255, 255, ${alpha + 0.04})`);
@@ -132,6 +134,7 @@ function initHeroScene(canvas) {
   const showcase = new THREE.Group();
   const markers = new THREE.Group();
   const panels = new THREE.Group();
+  let sceneLayout = "desktop";
 
   window.polunychka3d = { ready: false, frames: 0 };
 
@@ -229,7 +232,9 @@ function initHeroScene(canvas) {
     card.rotation.set(-0.08, -0.24 + config.x * 0.08, 0.06 - config.x * 0.05);
     card.userData.baseX = config.x;
     card.userData.baseY = config.y;
+    card.userData.baseZ = config.z;
     card.userData.baseRotationZ = card.rotation.z;
+    card.userData.baseScale = config.scale;
     card.userData.phase = config.phase;
     showcase.add(card);
   });
@@ -238,7 +243,9 @@ function initHeroScene(canvas) {
     const panel = new THREE.Mesh(new THREE.PlaneGeometry(0.72 + (i % 2) * 0.22, 1.05), i % 2 ? deepGlassMaterial : glassMaterial);
     panel.position.set(-1.15 + i * 0.44, -0.58 + Math.sin(i * 1.4) * 0.18, -0.35 - i * 0.08);
     panel.rotation.set(-0.2 + i * 0.025, 0.38, -0.22 + i * 0.07);
+    panel.userData.baseX = panel.position.x;
     panel.userData.baseY = panel.position.y;
+    panel.userData.baseZ = panel.position.z;
     panel.userData.baseRotationZ = panel.rotation.z;
     panel.userData.phase = i * 0.8;
     panels.add(panel);
@@ -257,7 +264,9 @@ function initHeroScene(canvas) {
     badge.scale.setScalar(config.scale);
     badge.userData.baseX = config.x;
     badge.userData.baseY = config.y;
+    badge.userData.baseZ = config.z;
     badge.userData.baseRotationZ = badge.rotation.z;
+    badge.userData.baseScale = config.scale;
     badge.userData.phase = config.phase;
     markers.add(badge);
   });
@@ -331,26 +340,79 @@ function initHeroScene(canvas) {
 
     const isMobile = width < 720;
     const isPhone = width < 520;
+    sceneLayout = isPhone ? "phone" : isMobile ? "tablet" : "desktop";
+
     root.position.set(
-      isPhone ? 0.46 : isMobile ? 0.78 : 1.9,
-      isPhone ? -0.9 : isMobile ? -0.54 : 0.02,
+      isPhone ? 1.08 : isMobile ? 0.92 : 1.9,
+      isPhone ? -1.55 : isMobile ? -0.72 : 0.02,
       isMobile ? 0.12 : 0
     );
-    root.scale.setScalar(isPhone ? 0.64 : isMobile ? 0.78 : 1.1);
-    markers.visible = !isMobile || height > 680;
+    root.scale.setScalar(isPhone ? 0.48 : isMobile ? 0.7 : 1.1);
+
+    const phoneCards = [
+      { x: -0.34, y: 0.28, z: 0.22, rotationZ: -0.04, scale: 0.72 },
+      { x: 0.16, y: -0.02, z: 0.5, rotationZ: 0.05, scale: 0.84 },
+      { x: -0.16, y: -0.38, z: 0.36, rotationZ: -0.07, scale: 0.62 }
+    ];
+    const tabletCards = [
+      { x: -0.5, y: 0.28, z: 0.2, rotationZ: -0.02, scale: 0.92 },
+      { x: 0.42, y: -0.06, z: 0.58, rotationZ: 0.05, scale: 1.02 },
+      { x: -0.04, y: -0.62, z: 0.42, rotationZ: -0.04, scale: 0.8 }
+    ];
+
+    showcase.children.forEach((card, index) => {
+      const config = isPhone ? phoneCards[index] : isMobile ? tabletCards[index] : null;
+      card.visible = true;
+      if (config) {
+        card.userData.baseX = config.x;
+        card.userData.baseY = config.y;
+        card.userData.baseZ = config.z;
+        card.userData.baseRotationZ = config.rotationZ;
+        card.position.set(config.x, config.y, config.z);
+        card.rotation.z = config.rotationZ;
+        card.scale.setScalar(config.scale);
+      } else {
+        card.userData.baseX = card.position.x = [-0.62, 0.64, -0.06][index];
+        card.userData.baseY = card.position.y = [0.46, 0, -0.74][index];
+        card.userData.baseZ = card.position.z = [0.2, 0.64, 0.42][index];
+        card.userData.baseRotationZ = [0.091, 0.028, 0.063][index];
+        card.rotation.z = card.userData.baseRotationZ;
+        card.scale.setScalar(card.userData.baseScale);
+      }
+    });
+
+    panels.visible = !isPhone;
+    markers.visible = !isMobile;
+    cardMaterial.opacity = isPhone ? 0.16 : isMobile ? 0.22 : 0.26;
+    cardBackMaterial.opacity = isPhone ? 0.2 : isMobile ? 0.26 : 0.3;
+    glassMaterial.opacity = isPhone ? 0.12 : isMobile ? 0.16 : 0.18;
+    deepGlassMaterial.opacity = isPhone ? 0.18 : isMobile ? 0.22 : 0.24;
   }
 
   function animate() {
     const elapsed = clock.getElapsedTime();
     pointer.lerp(targetPointer, 0.055);
 
-    root.rotation.y = -0.1 + Math.sin(elapsed * 0.42) * 0.1 + pointer.x * 0.14;
-    root.rotation.x = Math.sin(elapsed * 0.32) * 0.042 - pointer.y * 0.075;
+    const isPhoneScene = sceneLayout === "phone";
+    const isCompactScene = sceneLayout !== "desktop";
+
+    root.rotation.y = isPhoneScene
+      ? -0.035 + Math.sin(elapsed * 0.18) * 0.025 + pointer.x * 0.035
+      : -0.1 + Math.sin(elapsed * 0.42) * 0.1 + pointer.x * 0.14;
+    root.rotation.x = isPhoneScene
+      ? Math.sin(elapsed * 0.16) * 0.015 - pointer.y * 0.025
+      : Math.sin(elapsed * 0.32) * 0.042 - pointer.y * 0.075;
     showcase.children.forEach((card) => {
-      card.position.x = card.userData.baseX + Math.sin(elapsed * 0.36 + card.userData.phase) * 0.055;
-      card.position.y = card.userData.baseY + Math.cos(elapsed * 0.42 + card.userData.phase) * 0.075;
-      card.rotation.z = card.userData.baseRotationZ + Math.sin(elapsed * 0.36 + card.userData.phase) * 0.025;
-      card.rotation.y = -0.24 + Math.sin(elapsed * 0.32 + card.userData.phase) * 0.07 + pointer.x * 0.04;
+      const speed = isPhoneScene ? 0.16 : isCompactScene ? 0.24 : 0.36;
+      const floatX = isPhoneScene ? 0.014 : isCompactScene ? 0.032 : 0.055;
+      const floatY = isPhoneScene ? 0.024 : isCompactScene ? 0.045 : 0.075;
+      const rotateZ = isPhoneScene ? 0.006 : isCompactScene ? 0.014 : 0.025;
+      const rotateY = isPhoneScene ? 0.02 : isCompactScene ? 0.045 : 0.07;
+
+      card.position.x = card.userData.baseX + Math.sin(elapsed * speed + card.userData.phase) * floatX;
+      card.position.y = card.userData.baseY + Math.cos(elapsed * (speed + 0.04) + card.userData.phase) * floatY;
+      card.rotation.z = card.userData.baseRotationZ + Math.sin(elapsed * speed + card.userData.phase) * rotateZ;
+      card.rotation.y = (isPhoneScene ? -0.12 : -0.24) + Math.sin(elapsed * (speed + 0.02) + card.userData.phase) * rotateY + pointer.x * (isPhoneScene ? 0.018 : 0.04);
     });
 
     panels.children.forEach((panel) => {

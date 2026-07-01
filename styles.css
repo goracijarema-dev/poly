@@ -1436,6 +1436,10 @@ textarea {
     padding: 112px 16px 34px;
   }
 
+  .hero-canvas {
+    opacity: 0.72;
+  }
+
   .hero-content {
     max-width: 370px;
   }
