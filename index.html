@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Полуничка</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas class="ambient-canvas" id="ambientCanvas" aria-hidden="true"></canvas>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Полуничка">
+        <img class="brand-logo" src="assets/logo-strawberry.png" alt="" />
+        <span>Полуничка</span>
+      </a>
+      <nav class="nav-actions" aria-label="Основна навігація">
+        <a href="#catalog">Каталог</a>
+        <button class="ghost-button" id="cabinetLink" type="button">Кабінет</button>
+        <button class="primary-button small" id="openCreateTop" type="button">Розмістити послуги</button>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="Полуничка">
+        <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+        <div class="hero-overlay"></div>
+        <div class="hero-sheen" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Приватний каталог послуг</p>
+          <h1 class="visually-hidden">Полуничка</h1>
+          <p class="hero-copy">
+            Акуратний простір для анкет, описів, фото та гнучких тарифів.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-button" id="openRegisterHero" type="button">Створити кабінет</button>
+            <button class="secondary-button" id="openCreateHero" type="button">Виставити послуги</button>
+          </div>
+          <div class="hero-stats" aria-label="Статистика">
+            <span><strong id="heroListingsCount">0</strong> анкет</span>
+            <span><strong>1-8</strong> фото</span>
+            <span><strong>Кабінет</strong> для розміщення</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-band" id="cabinet" aria-label="Особистий кабінет">
+        <div class="section-heading">
+          <p class="eyebrow dark">Особистий кабінет</p>
+          <h2>Профіль і твої анкети</h2>
+        </div>
+        <div class="account-grid">
+          <article class="account-panel" id="guestPanel">
+            <h3>Увійди або зареєструйся</h3>
+            <p>Кабінет потрібен для створення та керування анкетами.</p>
+            <div class="panel-actions">
+              <button class="primary-button" id="openRegisterPanel" type="button">Реєстрація</button>
+              <button class="outline-button" id="openLoginPanel" type="button">Вхід</button>
+            </div>
+          </article>
+
+          <article class="account-panel is-hidden" id="userPanel">
+            <div class="profile-row">
+              <div class="avatar" id="profileInitial">П</div>
+              <div>
+                <h3 id="profileName">Користувач</h3>
+                <p id="profileEmail">email@example.com</p>
+              </div>
+            </div>
+            <div class="panel-actions">
+              <button class="primary-button" id="openCreatePanel" type="button">Розмістити послуги</button>
+              <button class="outline-button" id="logoutButton" type="button">Вийти</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="catalog-section" id="catalog" aria-label="Каталог анкет">
+        <div class="section-heading split">
+          <div>
+            <p class="eyebrow dark">Каталог</p>
+            <h2>Анкети послуг</h2>
+          </div>
+          <div class="catalog-summary">
+            <span id="resultsCount">0 анкет</span>
+            <button class="outline-button" id="resetFilters" type="button">Скинути фільтри</button>
+          </div>
+        </div>
+        <div class="catalog-tools" aria-label="Фільтри каталогу">
+          <label>
+            <span>Пошук</span>
+            <input id="searchInput" type="search" placeholder="Ім'я або опис" />
+          </label>
+          <label>
+            <span>Місто</span>
+            <select id="cityFilter" aria-label="Фільтр за містом"></select>
+          </label>
+          <label>
+            <span>Стать</span>
+            <select id="genderFilter" aria-label="Фільтр за статтю">
+              <option value="">Будь-яка</option>
+              <option value="Жінка">Жінка</option>
+              <option value="Чоловік">Чоловік</option>
+              <option value="Інше">Інше</option>
+            </select>
+          </label>
+          <label>
+            <span>Ціна від</span>
+            <input id="priceMinFilter" type="number" min="0" placeholder="грн" />
+          </label>
+          <label>
+            <span>Ціна до</span>
+            <input id="priceMaxFilter" type="number" min="0" placeholder="грн" />
+          </label>
+          <label>
+            <span>Вік від</span>
+            <input id="ageMinFilter" type="number" min="18" max="80" placeholder="18" />
+          </label>
+          <label>
+            <span>Вік до</span>
+            <input id="ageMaxFilter" type="number" min="18" max="80" placeholder="80" />
+          </label>
+          <label>
+            <span>Ріст від</span>
+            <input id="heightMinFilter" type="number" min="120" max="230" placeholder="см" />
+          </label>
+          <label>
+            <span>Бюст</span>
+            <input id="bustFilter" type="text" maxlength="12" placeholder="B, C, 2..." />
+          </label>
+        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
+        <div class="empty-state is-hidden" id="emptyState">
+          <h3>Анкет поки немає</h3>
+          <p>Створи кабінет і додай першу анкету в каталог.</p>
+          <button class="primary-button" id="emptyCreateButton" type="button">Додати анкету</button>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="modal" id="authModal">
+      <form class="modal-body" id="authForm" method="dialog">
+        <button class="icon-button close-modal" type="button" data-close="authModal" aria-label="Закрити">×</button>
+        <p class="eyebrow dark" id="authModeLabel">Реєстрація</p>
+        <h2 id="authTitle">Створити кабінет</h2>
+        <div class="form-grid one">
+          <label id="nameField">
+            <span>Ім'я</span>
+            <input id="authName" type="text" autocomplete="name" minlength="2" />
+          </label>
+          <label>
+            <span>Пошта</span>
+            <input id="authEmail" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            <span>Пароль</span>
+            <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required />
+          </label>
+        </div>
+        <p class="form-error" id="authError" role="alert"></p>
+        <div class="modal-actions">
+          <button class="primary-button" id="authSubmit" type="submit">Зареєструватися</button>
+          <button class="text-button" id="toggleAuthMode" type="button">У мене вже є кабінет</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal wide" id="listingModal">
+      <form class="modal-body" id="listingForm" method="dialog">
+        <button class="icon-button close-modal" type="button" data-close="listingModal" aria-label="Закрити">×</button>
+        <p class="eyebrow dark">Анкета послуг</p>
+        <h2 id="listingModalTitle">Розмістити послуги</h2>
+
+        <div class="form-grid">
+          <label>
+            <span>Ім'я в анкеті</span>
+            <input id="listingName" type="text" minlength="2" maxlength="40" required />
+          </label>
+          <label>
+            <span>Стать</span>
+            <select id="listingGender" required>
+              <option value="">Обери</option>
+              <option>Жінка</option>
+              <option>Чоловік</option>
+              <option>Інше</option>
+            </select>
+          </label>
+          <label>
+            <span>Вік</span>
+            <input id="listingAge" type="number" min="18" max="80" required />
+          </label>
+          <label>
+            <span>Ріст, см</span>
+            <input id="listingHeight" type="number" min="120" max="230" required />
+          </label>
+          <label>
+            <span>Вага, кг</span>
+            <input id="listingWeight" type="number" min="35" max="220" required />
+          </label>
+          <label>
+            <span>Розмір бюста</span>
+            <input id="listingBust" type="text" maxlength="12" placeholder="Напр. B, 2, 75C" required />
+          </label>
+          <label>
+            <span>Місто</span>
+            <input id="listingCity" type="text" list="ukrainianCities" maxlength="40" placeholder="Київ" required />
+          </label>
+          <label>
+            <span>Контактний телефон</span>
+            <input id="listingPhone" type="tel" maxlength="24" placeholder="+380..." required />
+          </label>
+        </div>
+        <fieldset class="price-fieldset">
+          <legend>Тарифи, грн</legend>
+          <p>Заповни хоча б один варіант. Решту можна залишити порожніми.</p>
+          <div class="price-grid">
+            <label>
+              <span>30 хв</span>
+              <input id="listingPrice30" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 700" />
+            </label>
+            <label>
+              <span>1 година</span>
+              <input id="listingPriceHour" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 1200" />
+            </label>
+            <label>
+              <span>2 години</span>
+              <input id="listingPrice2h" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 2200" />
+            </label>
+            <label>
+              <span>5 годин</span>
+              <input id="listingPrice5h" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 5000" />
+            </label>
+            <label>
+              <span>Ніч</span>
+              <input id="listingPriceNight" type="number" min="1" max="999999" inputmode="numeric" placeholder="Напр. 9000" />
+            </label>
+          </div>
+        </fieldset>
+        <datalist id="ukrainianCities"></datalist>
+
+        <label class="full-label">
+          <span>Опис</span>
+          <textarea id="listingDescription" rows="5" minlength="20" maxlength="600" required></textarea>
+        </label>
+
+        <label class="upload-area" for="listingPhotos">
+          <span>Фото</span>
+          <strong>Додай від 1 до 8 фото</strong>
+          <small>JPG, PNG або WEBP. У прототипі фото зберігаються тільки в цьому браузері.</small>
+          <input id="listingPhotos" type="file" accept="image/png,image/jpeg,image/webp" multiple required />
+        </label>
+        <div class="photo-preview" id="photoPreview" aria-label="Попередній перегляд фото"></div>
+
+        <p class="form-error" id="listingError" role="alert"></p>
+        <div class="modal-actions">
+          <button class="primary-button" id="listingSubmit" type="submit">Опублікувати</button>
+          <button class="outline-button" type="button" data-close="listingModal">Скасувати</button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="cardTemplate">
+      <article class="profile-card">
+        <div class="card-photo"></div>
+        <div class="card-body">
+          <div class="card-topline">
+            <h3></h3>
+            <strong></strong>
+          </div>
+          <p class="card-city"></p>
+          <div class="metrics"></div>
+          <div class="price-list"></div>
+          <a class="card-phone" href="#"></a>
+          <p class="card-description"></p>
+          <div class="card-footer">
+            <span class="owner-badge"></span>
+            <div class="card-actions">
+              <button class="outline-button edit-card" type="button">Редагувати</button>
+              <button class="outline-button delete-card" type="button">Видалити</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="three-scene.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
