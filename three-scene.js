@@ -3,12 +3,16 @@ import * as THREE from "three";
 const heroCanvas = document.querySelector("#heroCanvas");
 const ambientCanvas = document.querySelector("#ambientCanvas");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const phoneHeroScene = window.matchMedia("(max-width: 720px)");
 
 if (ambientCanvas) {
   initAmbientBackground(ambientCanvas);
 }
 
-if (heroCanvas) {
+if (heroCanvas && phoneHeroScene.matches) {
+  heroCanvas.dataset.sceneReady = "disabled-mobile";
+  heroCanvas.dataset.sceneFrames = "0";
+} else if (heroCanvas) {
   initHeroScene(heroCanvas);
 }
 

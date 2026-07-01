@@ -1437,7 +1437,7 @@ textarea {
   }
 
   .hero-canvas {
-    opacity: 0.72;
+    display: none;
   }
 
   .hero-content {
